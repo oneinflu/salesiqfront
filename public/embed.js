@@ -21,7 +21,7 @@
     const urlParams = scriptUrl ? scriptUrl.searchParams : new URLSearchParams();
     
     const CONFIG = {
-        baseUrl: 'http://localhost:3000', 
+        baseUrl: 'https://salesiqliveapp-7hm63.ondigitalocean.app', 
         companyId: urlParams.get("companyId"),
         websiteId: urlParams.get("websiteId")
     };

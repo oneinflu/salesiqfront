@@ -13,7 +13,7 @@ export default function IntegrationPage() {
     const websiteId = "697e03f744d6d61aec26d276"; 
     
     const scriptCode = `<script>window.$salesiq=window.$salesiq||{};$salesiq.ready=function(){};</script>
-<script id="salesiqscript" src="http://localhost:3000/embed.js?companyId=${companyId}&websiteId=${websiteId}" defer></script>`;
+<script id="salesiqscript" src="https://salesiqliveapp-7hm63.ondigitalocean.app/embed.js?companyId=${companyId}&websiteId=${websiteId}" defer></script>`;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(scriptCode);
