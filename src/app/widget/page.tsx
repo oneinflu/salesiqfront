@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { 
     HomeLine, 
     MessageChatSquare, 
@@ -32,7 +32,7 @@ interface Message {
     tempId?: string; // For optimistic updates
 }
 
-export default function WidgetPage() {
+function WidgetContent() {
     const searchParams = useSearchParams();
     const companyId = searchParams.get("companyId");
     const websiteId = searchParams.get("websiteId");
@@ -575,5 +575,13 @@ function ChevronRight({ className }: { className?: string }) {
         <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 18L15 12L9 6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
+    );
+}
+
+export default function WidgetPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <WidgetContent />
+        </Suspense>
     );
 }
