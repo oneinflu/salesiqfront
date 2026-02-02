@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:5001';
+const SOCKET_URL = 'https://salesiqbackendapis-qw2eh.ondigitalocean.app';
 const DEFAULT_COMPANY_ID = '697e03f744d6d61aec26d272';
 
 class SocketService {
