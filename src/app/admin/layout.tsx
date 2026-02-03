@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { 
     HomeLine, 
     LifeBuoy01, 
@@ -40,11 +41,31 @@ const footerItems: NavItemType[] = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
+    const router = useRouter();
+    const [authorized, setAuthorized] = useState(false);
+    const isRegisterRoute = pathname === "/admin/register";
 
-    return (
+    useEffect(() => {
+        if (isRegisterRoute) {
+            setAuthorized(true);
+            return;
+        }
+        const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+        if (!token) {
+            router.replace("/login");
+            return;
+        }
+        setAuthorized(true);
+    }, [pathname, router]);
+
+    if (isRegisterRoute) {
+        return <main className="flex-1 bg-secondary">{children}</main>;
+    }
+
+    return authorized ? (
         <div className="flex min-h-dvh flex-col lg:flex-row">
             <SidebarNavigationSimple activeUrl={pathname} items={navigation} footerItems={footerItems} />
             <main className="flex-1 bg-secondary">{children}</main>
         </div>
-    );
+    ) : null;
 }

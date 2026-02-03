@@ -2,7 +2,10 @@ const BASE_URL = 'https://salesiqbackendapis-qw2eh.ondigitalocean.app/api';
 
 export const apiClient = {
   get: async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${BASE_URL}${endpoint}`);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
     if (!response.ok) {
       throw new Error(`API Error: ${response.statusText}`);
     }
@@ -10,10 +13,12 @@ export const apiClient = {
   },
 
   post: async <T>(endpoint: string, data: any): Promise<T> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(data),
     });
@@ -24,10 +29,12 @@ export const apiClient = {
   },
 
   put: async <T>(endpoint: string, data: any): Promise<T> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(data),
     });
@@ -38,8 +45,10 @@ export const apiClient = {
   },
 
   delete: async <T>(endpoint: string): Promise<T> => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
     if (!response.ok) {
       throw new Error(`API Error: ${response.statusText}`);
