@@ -46,8 +46,9 @@ const placeholderAccounts: NavAccountType[] = [
 export const NavAccountMenu = ({
     className,
     selectedAccountId = "olivia",
+    onLogout,
     ...dialogProps
-}: AriaDialogProps & { className?: string; accounts?: NavAccountType[]; selectedAccountId?: string }) => {
+}: AriaDialogProps & { className?: string; accounts?: NavAccountType[]; selectedAccountId?: string; onLogout?: () => void }) => {
     const focusManager = useFocusManager();
     const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -117,7 +118,7 @@ export const NavAccountMenu = ({
             </div>
 
             <div className="pt-1 pb-1.5">
-                <NavAccountCardMenuItem label="Sign out" icon={LogOut01} shortcut="⌥⇧Q" />
+                <NavAccountCardMenuItem label="Sign out" icon={LogOut01} shortcut="⌥⇧Q" onClick={onLogout} />
             </div>
         </AriaDialog>
     );
@@ -158,30 +159,50 @@ export const NavAccountCard = ({
     popoverPlacement,
     selectedAccountId = "olivia",
     items = placeholderAccounts,
+    user,
+    onLogout,
+    interactive = true,
 }: {
     popoverPlacement?: Placement;
     selectedAccountId?: string;
     items?: NavAccountType[];
+    user?: { name: string; email: string; avatar?: string };
+    onLogout?: () => void;
+    interactive?: boolean;
 }) => {
     const triggerRef = useRef<HTMLDivElement>(null);
     const isDesktop = useBreakpoint("lg");
 
-    const selectedAccount = placeholderAccounts.find((account) => account.id === selectedAccountId);
+    const selectedAccount = user 
+        ? { id: "current", name: user.name, email: user.email, avatar: user.avatar || "", status: "online" as const }
+        : placeholderAccounts.find((account) => account.id === selectedAccountId);
 
     if (!selectedAccount) {
         console.warn(`Account with ID ${selectedAccountId} not found in <NavAccountCard />`);
         return null;
     }
 
+    const content = (
+        <AvatarLabelGroup
+            size="md"
+            src={selectedAccount.avatar}
+            title={selectedAccount.name}
+            subtitle={selectedAccount.email}
+            status={selectedAccount.status}
+        />
+    );
+
+    if (!interactive) {
+        return (
+            <div ref={triggerRef} className="relative flex items-center gap-3 rounded-xl p-3 ring-1 ring-secondary ring-inset">
+                {content}
+            </div>
+        );
+    }
+
     return (
         <div ref={triggerRef} className="relative flex items-center gap-3 rounded-xl p-3 ring-1 ring-secondary ring-inset">
-            <AvatarLabelGroup
-                size="md"
-                src={selectedAccount.avatar}
-                title={selectedAccount.name}
-                subtitle={selectedAccount.email}
-                status={selectedAccount.status}
-            />
+            {content}
 
             <div className="absolute top-1.5 right-1.5">
                 <AriaDialogTrigger>
@@ -202,7 +223,7 @@ export const NavAccountCard = ({
                             )
                         }
                     >
-                        <NavAccountMenu selectedAccountId={selectedAccountId} accounts={items} />
+                        <NavAccountMenu selectedAccountId={selectedAccountId} accounts={items} onLogout={onLogout} />
                     </AriaPopover>
                 </AriaDialogTrigger>
             </div>

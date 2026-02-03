@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { SearchLg } from "@untitledui/icons";
+import { SearchLg, LogOut01 } from "@untitledui/icons";
 import { Input } from "@/components/base/input/input";
 import { UntitledLogo } from "@/components/foundations/logo/untitledui-logo";
 import { cx } from "@/utils/cx";
@@ -26,6 +26,10 @@ interface SidebarNavigationProps {
     hideBorder?: boolean;
     /** Additional CSS classes to apply to the sidebar. */
     className?: string;
+    /** User info to display in account card. */
+    user?: { name: string; email: string; avatar?: string };
+    /** Callback for logout. */
+    onLogout?: () => void;
 }
 
 export const SidebarNavigationSimple = ({
@@ -36,6 +40,8 @@ export const SidebarNavigationSimple = ({
     showAccountCard = true,
     hideBorder = false,
     className,
+    user,
+    onLogout,
 }: SidebarNavigationProps) => {
     const MAIN_SIDEBAR_WIDTH = 296;
 
@@ -72,9 +78,25 @@ export const SidebarNavigationSimple = ({
                     </ul>
                 )}
 
+                <ul className="flex flex-col">
+                    <li className="py-0.5">
+                        <NavItemBase 
+                            icon={LogOut01} 
+                            href="#" 
+                            type="link" 
+                            onClick={(e) => { 
+                                e.preventDefault(); 
+                                onLogout?.(); 
+                            }}
+                        >
+                            Sign out
+                        </NavItemBase>
+                    </li>
+                </ul>
+
                 {featureCard}
 
-                {showAccountCard && <NavAccountCard />}
+                {showAccountCard && <NavAccountCard user={user} onLogout={onLogout} interactive={false} />}
             </div>
         </aside>
     );
