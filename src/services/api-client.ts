@@ -1,4 +1,4 @@
-const BASE_URL = 'https://salesiqbackendapis-qw2eh.ondigitalocean.app/api';
+const BASE_URL = 'http://localhost:5001/api';
 
 export const apiClient = {
   get: async <T>(endpoint: string): Promise<T> => {
