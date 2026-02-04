@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { socketService } from "@/services/socket-service";
+import { companyService } from "@/services/company-service";
 import { 
     FilterLines, 
     LayoutAlt01, 
@@ -180,7 +181,21 @@ const LiveViewPage = () => {
         audioRef.current = new Audio('/tring.mp3');
         audioRef.current.loop = true;
         
-        socketService.connect();
+        const initSocket = async () => {
+            try {
+                const companies = await companyService.getAll();
+                if (companies && companies.length > 0) {
+                    socketService.connect(companies[0]._id);
+                } else {
+                    socketService.connect();
+                }
+            } catch (err) {
+                console.error("Failed to fetch companies:", err);
+                socketService.connect();
+            }
+        };
+        
+        initSocket();
 
         const mapVisitor = (v: any): Visitor => {
             const visitorDetails = v.visitor || v; // Handle if wrapped in session object

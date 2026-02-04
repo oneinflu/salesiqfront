@@ -1,17 +1,21 @@
 import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = 'http://localhost:5001';
-const DEFAULT_COMPANY_ID = '697e03f744d6d61aec26d272';
 
 class SocketService {
     private socket: Socket | null = null;
     private listeners: Map<string, Function[]> = new Map();
+    private currentCompanyId: string | null = null;
 
-    connect() {
+    connect(companyId?: string) {
+        if (companyId) {
+            this.currentCompanyId = companyId;
+        }
+
         if (this.socket) {
-            if (this.socket.connected) {
+            if (this.socket.connected && this.currentCompanyId) {
                 // Ensure we join the company room even if already connected
-                this.emit('agent-join', DEFAULT_COMPANY_ID);
+                this.emit('agent-join', this.currentCompanyId);
             }
             return;
         }
@@ -21,7 +25,9 @@ class SocketService {
 
         this.socket.on('connect', () => {
             console.log('Connected to socket server');
-            this.emit('agent-join', DEFAULT_COMPANY_ID);
+            if (this.currentCompanyId) {
+                this.emit('agent-join', this.currentCompanyId);
+            }
         });
 
         this.socket.on('disconnect', () => {
